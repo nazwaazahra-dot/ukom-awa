@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website TKJ - Nazwa Azhara</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f8fc;
+            color: #26374a;
+            line-height: 1.7;
+        }
+
+        /* NAVBAR */
+        header {
+            background-color: #063b70;
+            color: white;
+            padding: 18px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #64c5ff;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 22px;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: #64c5ff;
+        }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(120deg, #063b70, #0879bd);
+            color: white;
+            padding: 100px 8%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .hero-text {
+            max-width: 650px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            line-height: 1.3;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 span {
+            color: #72d0ff;
+        }
+
+        .hero p {
+            font-size: 16px;
+            margin-bottom: 28px;
+            color: #e3f3ff;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: white;
+            color: #064477;
+            padding: 11px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .button:hover {
+            background-color: #cceeff;
+        }
+
+        .hero-icon {
+            font-size: 120px;
+            padding: 30px;
+            background-color: rgba(255,255,255,0.12);
+            border-radius: 20px;
+        }
+
+        /* SECTION */
+        section {
+            padding: 65px 8%;
+        }
+
+        .judul {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .judul h2 {
+            color: #064477;
+            font-size: 29px;
+        }
+
+        .judul p {
+            color: #718096;
+        }
+
+        /* TENTANG */
+        .tentang {
+            background-color: white;
+        }
+
+        .tentang-content {
+            max-width: 850px;
+            margin: auto;
+            text-align: center;
+        }
+
+        /* CARD */
+        .container-card {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 22px;
+        }
+
+        .card {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e1ebf5;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 18px rgba(0, 65, 120, 0.12);
+        }
+
+        .card .icon {
+            font-size: 35px;
+            margin-bottom: 12px;
+        }
+
+        .card h3 {
+            color: #07528d;
+            margin-bottom: 10px;
+        }
+
+        /* PRAKTIK */
+        .praktik {
+            background-color: #e8f3fc;
+        }
+
+        .praktik-box {
+            background-color: white;
+            padding: 25px;
+            margin-bottom: 18px;
+            border-left: 5px solid #0879bd;
+            border-radius: 7px;
+        }
+
+        .praktik-box h3 {
+            color: #07528d;
+            margin-bottom: 8px;
+        }
+
+        code {
+            display: block;
+            background-color: #102b45;
+            color: #8ee6ff;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: #063b70;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        footer p {
+            font-size: 14px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            nav a {
+                margin: 0 7px;
+                font-size: 12px;
+            }
+
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding: 65px 7%;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .hero-icon {
+                font-size: 75px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <header>
+        <div class="logo">TKJ<span>ZONE.</span></div>
+
+        <nav>
+            <a href="#home">Beranda</a>
+            <a href="#tentang">Tentang TKJ</a>
+            <a href="#materi">Materi</a>
+            <a href="#perangkat">Perangkat</a>
+            <a href="#praktik">Praktik</a>
+        </nav>
+    </header>
+
+
+    <!-- BERANDA -->
+    <div class="hero" id="home">
+        <div class="hero-text">
+            <h1>Welcome to my website <span>Nazwa Azhara</span></h1>
+
+            <p>
+                Selamat datang di website pribadi saya.
+                Di sini kita akan mengenal lebih jauh tentang
+                Teknik Komputer dan Jaringan, mulai dari komputer,
+                jaringan internet, perangkat jaringan, hingga
+                konfigurasi jaringan.
+            </p>
+
+            <a href="#tentang" class="button">Jelajahi Sekarang</a>
+        </div>
+
+        <div class="hero-icon">
+            💻
+        </div>
+    </div>
+
+
+    <!-- TENTANG TKJ -->
+    <section class="tentang" id="tentang">
+        <div class="judul">
+            <h2>Apa Itu TKJ?</h2>
+            <p>Mengenal jurusan Teknik Komputer dan Jaringan</p>
+        </div>
+
+        <div class="tentang-content">
+            <p>
+                Teknik Komputer dan Jaringan (TKJ) merupakan salah satu
+                jurusan yang mempelajari tentang komputer, perangkat keras,
+                sistem operasi, jaringan komputer, serta teknologi internet.
+            </p>
+
+            <br>
+
+            <p>
+                Di jurusan TKJ, siswa tidak hanya belajar teori,
+                tetapi juga melakukan praktik secara langsung.
+                Contohnya merakit komputer, membuat kabel jaringan,
+                mengatur alamat IP, melakukan konfigurasi router,
+                dan mempelajari jaringan fiber optik.
+            </p>
+        </div>
+    </section>
+
+
+    <!-- MATERI -->
+    <section id="materi">
+        <div class="judul">
+            <h2>Materi Pembelajaran TKJ</h2>
+            <p>Beberapa materi yang dipelajari di jurusan TKJ</p>
+        </div>
+
+        <div class="container-card">
+
+            <div class="card">
+                <div class="icon">🌐</div>
+                <h3>Jaringan Komputer</h3>
+                <p>
+                    Jaringan komputer adalah hubungan antara dua perangkat
+                    atau lebih agar dapat saling bertukar data dan berbagi
+                    sumber daya.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="icon">🖥️</div>
+                <h3>Sistem Komputer</h3>
+                <p>
+                    Mempelajari bagian-bagian komputer seperti processor,
+                    RAM, motherboard, hard disk, dan perangkat lainnya.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="icon">📡</div>
+                <h3>IP Address</h3>
+                <p>
+                    IP Address merupakan alamat identitas perangkat
+                    dalam sebuah jaringan agar perangkat dapat
+                    saling berkomunikasi.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="icon">🔐</div>
+                <h3>Keamanan Jaringan</h3>
+                <p>
+                    Mempelajari cara melindungi jaringan dari akses
+                    yang tidak diizinkan, serangan, dan pencurian data.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="icon">⚙️</div>
+                <h3>Sistem Operasi</h3>
+                <p>
+                    Sistem operasi merupakan perangkat lunak yang
+                    mengatur kerja komputer, seperti Windows dan Linux.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="icon">🔌</div>
+                <h3>Routing</h3>
+                <p>
+                    Routing adalah proses menentukan jalur yang digunakan
+                    untuk mengirimkan paket data dari satu jaringan
+                    menuju jaringan lainnya.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- PERANGKAT JARINGAN -->
+    <section class="tentang" id="perangkat">
+        <div class="judul">
+            <h2>Perangkat Jaringan</h2>
+            <p>Perangkat yang sering digunakan dalam jaringan komputer</p>
+        </div>
+
+        <div class="container-card">
+
+            <div class="card">
+                <div class="icon">📶</div>
+                <h3>Router</h3>
+                <p>
+                    Router berfungsi menghubungkan beberapa jaringan
+                    dan menentukan jalur pengiriman paket data.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="icon">🔀</div>
+                <h3>Switch</h3>
+                <p>
+                    Switch digunakan untuk menghubungkan beberapa
+                    perangkat dalam satu jaringan lokal (LAN).
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="icon">📡</div>
+                <h3>Access Point</h3>
+                <p>
+                    Access Point menyediakan koneksi jaringan
+                    nirkabel atau Wi-Fi untuk perangkat.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="icon">🔗</div>
+                <h3>Kabel UTP</h3>
+                <p>
+                    Kabel UTP digunakan sebagai media penghantar
+                    data pada jaringan komputer menggunakan konektor RJ45.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="icon">💡</div>
+                <h3>OLT</h3>
+                <p>
+                    Optical Line Terminal merupakan perangkat yang
+                    digunakan pada jaringan fiber optik untuk mengelola
+                    koneksi menuju pelanggan.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="icon">📦</div>
+                <h3>ONU / ONT</h3>
+                <p>
+                    ONU atau ONT merupakan perangkat di sisi pelanggan
+                    yang menerima sinyal fiber optik dan mengubahnya
+                    menjadi koneksi jaringan.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- FIBER OPTIK -->
+    <section id="fiber">
+        <div class="judul">
+            <h2>Fiber Optik dan FTTH</h2>
+            <p>Mengenal teknologi jaringan internet saat ini</p>
+        </div>
+
+        <div class="tentang-content">
+            <p>
+                Fiber optik adalah media transmisi yang menggunakan
+                serat kaca atau plastik untuk mengirimkan data dalam
+                bentuk cahaya. Teknologi ini mampu mengirimkan data
+                dengan kecepatan tinggi dan jarak yang jauh.
+            </p>
+
+            <br>
+
+            <p>
+                FTTH (Fiber To The Home) merupakan teknologi jaringan
+                yang menghubungkan jaringan fiber optik langsung
+                sampai ke rumah pelanggan.
+            </p>
+        </div>
+    </section>
+
+
+    <!-- PRAKTIK -->
+    <section class="praktik" id="praktik">
+        <div class="judul">
+            <h2>Praktik Dasar TKJ</h2>
+            <p>Contoh kegiatan praktik yang dilakukan siswa TKJ</p>
+        </div>
+
+        <div class="praktik-box">
+            <h3>1. Membuat Kabel LAN</h3>
+            <p>
+                Membuat kabel LAN dilakukan dengan menyusun kabel UTP
+                sesuai standar T568A atau T568B, kemudian memasangnya
+                pada konektor RJ45 menggunakan tang crimping.
+            </p>
+        </div>
+
+        <div class="praktik-box">
+            <h3>2. Konfigurasi IP Address</h3>
+            <p>
+                IP Address digunakan untuk memberikan alamat pada
+                perangkat agar dapat terhubung dan berkomunikasi
+                dalam jaringan.
+            </p>
+            <code>192.168.1.10</code>
+        </div>
+
+        <div class="praktik-box">
+            <h3>3. Perintah Dasar CMD</h3>
+            <p>Berikut beberapa perintah dasar Command Prompt Windows:</p>
+
+            <code>ipconfig</code>
+            <p>Menampilkan informasi konfigurasi IP Address.</p>
+
+            <code>ping google.com</code>
+            <p>Menguji koneksi jaringan ke alamat tujuan.</p>
+
+            <code>ipconfig /all</code>
+            <p>Menampilkan informasi jaringan secara lengkap.</p>
+
+            <code>tracert google.com</code>
+            <p>Melihat jalur yang dilewati paket data menuju tujuan.</p>
+        </div>
+
+        <div class="praktik-box">
+            <h3>4. Konfigurasi Router</h3>
+            <p>
+                Konfigurasi router dilakukan untuk mengatur jaringan,
+                memberikan alamat IP, mengatur DHCP, dan menghubungkan
+                jaringan lokal ke internet.
+            </p>
+        </div>
+
+    </section>
+
+
+    <!-- PENUTUP -->
+    <section>
+        <div class="judul">
+            <h2>Terus Belajar dan Berkembang!</h2>
+
+            <p>
+                Teknologi akan terus berkembang.
+                Dengan mempelajari TKJ, kita dapat memahami bagaimana
+                komputer dan jaringan bekerja serta mengembangkan
+                kemampuan di bidang teknologi.
+            </p>
+
+            <br>
+
+            <h3 style="color:#07528d;">
+                Thank You for Visiting My Website!
+            </h3>
+
+            <p>Created by Nazwa Azhara | Teknik Komputer dan Jaringan</p>
+        </div>
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 Nazwa Azhara | Website Pembelajaran TKJ</p>
+    </footer>
+
+</body>
+</html>
