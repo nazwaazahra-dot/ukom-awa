@@ -1,1 +1,638 @@
-nazwa
+KONFIGURASI LSP-P3
+    Ubuntu Server, MariaDB, Apache2, PHP, phpMyAdmin, dan DNS BIND9
+
+    INFORMASI SERVER
+    IP Server        : 100.100.32.2/30
+    Gateway          : 100.100.32.1
+    Domain           : ukom12tkja-32.sch.id
+    Database         : ukom32
+    Tabel            : informasi
+    User Database    : ukom32
+    Password Database: UkomDB@2026
+
+    ============================================================
+    BAGIAN 1. KONFIGURASI DATABASE
+    ============================================================
+sudo nano /etc/netplan/..
+network:
+  version: 2
+  ethernets:
+    enp0s3:
+      dhcp4: no
+      addresses:
+        - 100.100.32.2/30
+      routes:
+        - to: default
+          via: 100.100.32.1
+      nameservers:
+        addresses:
+          - 100.100.32.2
+          - 8.8.8.8
+          - 1.1.1.1
+
+    1. UPDATE PAKET UBUNTU
+
+    sudo apt update -y
+
+
+    2. INSTALL MARIADB SERVER DAN CLIENT
+
+    sudo apt install mariadb-server mariadb-client -y
+
+
+    3. AKTIFKAN MARIADB
+
+    sudo systemctl enable --now mariadb
+
+
+    4. PERIKSA STATUS MARIADB
+
+    sudo systemctl status mariadb
+
+    Pastikan status menunjukkan active (running).
+
+
+    5. AMANKAN MARIADB
+
+    sudo mariadb-secure-installation
+
+    Pilihan konfigurasi:
+    - Switch to unix_socket authentication: Y
+    - Change root password: N
+    - Remove anonymous users: Y
+    - Disallow root login remotely: Y
+    - Remove test database: Y
+    - Reload privilege tables: Y
+
+
+    6. MASUK KE MARIADB DAN BUAT DATABASE
+
+    sudo mariadb
+
+    Jalankan SQL berikut:
+
+CREATE DATABASE ukom32
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+
+    7. PERIKSA DATABASE
+
+    SHOW DATABASES;
+
+    Pastikan database ukom32 muncul.
+
+
+    8. BUAT USER DATABASE
+
+CREATE USER 'ukom32'@'localhost'
+IDENTIFIED BY 'UkomDB@2026';
+
+GRANT ALL PRIVILEGES ON ukom32.*
+TO 'ukom32'@'localhost';
+
+
+CREATE USER 'ukom32-sony'@'localhost'
+IDENTIFIED BY 'UkomDB@2026';
+
+GRANT SELECT, SHOW VIEW ON ukom32.*
+TO 'ukom32-sony'@'localhost';
+
+FLUSH PRIVILEGES;
+SHOW GRANTS FOR 'ukom32'@'localhost';
+
+SHOW GRANTS FOR 'ukom32-sony'@'localhost';
+
+SELECT User, Host FROM mysql.user;
+
+    9. BUAT TABEL INFORMASI
+
+    USE ukom32;
+    
+CREATE TABLE informasi (        
+id INT AUTO_INCREMENT PRIMARY KEY,
+nama VARCHAR(100) NOT NULL,
+keterangan TEXT,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+    SHOW TABLES;
+
+    Pastikan tabel informasi muncul.
+
+
+    10. MASUKKAN DATA UKOM
+
+INSERT INTO informasi (nama, keterangan)
+VALUES
+('UKOM TKJ', 'Web Server dan Database Server'),
+('Absen 32', 'Konfigurasi jaringan Ukom'),
+('MikroTik', 'Gateway dan HotSpot'),
+('Server', 'Ubuntu Server 100.100.32.2');
+
+DELETE FROM informasi
+WHERE id = 4;
+
+INSERT INTO informasi (id, nama, keterangan)
+VALUES (4, 'Server', 'Ubuntu Server 100.100.32.2');
+
+UPDATE informasi
+SET nama = 'Server',
+    keterangan = 'Ubuntu Server 100.100.32.2'
+WHERE id = 4;
+
+
+    SELECT * FROM informasi;
+
+
+    11. TES USER DATABASE
+
+    Keluar dari MariaDB:
+
+    EXIT;
+
+    Login menggunakan user aplikasi:
+
+    mariadb -u ukom32 -p ukom32
+    mariadb -u ukom32-sony -p ukom32
+
+    Masukkan password:
+    UkomDB@2026
+
+    Tes tabel:
+
+    SELECT * FROM informasi;
+    EXIT;
+
+
+    ============================================================
+    BAGIAN 2. KONFIGURASI WEB SERVER DAN PHP
+    ============================================================
+
+    12. INSTALL APACHE2 DAN PHP
+
+    sudo apt install apache2 php libapache2-mod-php php-mysql -y
+    sudo systemctl enable --now apache2
+
+    Buat direktori website:
+
+    sudo mkdir -p /var/www/ukom12tkja-32.sch.id
+
+    sudo nano /etc/apache2/sites-available/000-default.conf
+
+    <VirtualHost *:80>
+        ServerName ukom12tkja-32.sch.id
+ServerAlias www.ukom12tkja-32.sch.id
+
+<Directory /var/www/ukom12tkja-32.sch.id>
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
+</Directory>
+
+        # The ServerName directive sets the request scheme, hostname and port that
+        # the server uses to identify itself. This is used when creating
+        # redirection URLs. In the context of virtual hosts, the ServerName
+        # specifies what hostname must appear in the request's Host: header to
+        # match this virtual host. For the default virtual host (this file) this
+        # value is not decisive as it is used as a last resort host regardless.
+        # However, you must set it for any further virtual host explicitly.
+        #ServerName www.example.com
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/ukom12tkja-32.sch.id
+
+        # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+        # error, crit, alert, emerg.
+        # It is also possible to configure the loglevel for particular
+        # modules, e.g.
+        #LogLevel info ssl:warn
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        # For most configuration files from conf-available/, which are
+        # enabled or disabled at a global level, it is possible to
+        # include a line for only one particular virtual host. For example the
+        # following line enables the CGI configuration for this host only
+        # after it has been globally disabled with "a2disconf".
+        #Include conf-available/serve-cgi-bin.conf
+</VirtualHost>
+        
+    sudo systemctl reload apache2
+    sudo systemctl status apache2
+    Buat file PHP:
+
+    sudo nano /var/www/ukom12tkja-32.sch.id/database.php
+
+    Isi file dengan kode berikut:
+<?php
+$host = "localhost";
+$user = "ukom32";    
+$password = "UkomDB@2026";
+$database = "ukom32";
+
+$conn = new mysqli($host, $user, $password, $database);
+
+if ($conn->connect_error) {
+http_response_code(500);
+error_log("Koneksi database gagal: " . $conn->connect_error);
+exit("Koneksi database gagal.");
+}
+
+$conn->set_charset("utf8mb4");
+
+echo "<h1>Koneksi Database Berhasil</h1>";
+
+$sql = "SELECT * FROM informasi";
+$result = $conn->query($sql);
+
+if ($result && $result->num_rows > 0) {
+while ($row = $result->fetch_assoc()) {
+echo "<hr>";
+echo "ID: " . htmlspecialchars($row["id"]) . "<br>";
+echo "Nama: " . htmlspecialchars($row["nama"]) . "<br>";
+echo "Keterangan: " . htmlspecialchars($row["keterangan"]) . "<br>";
+echo "Dibuat: " . htmlspecialchars($row["created_at"]) . "<br>";
+}
+} else {
+echo "Tidak ada data.";
+}
+
+$conn->close();
+?>
+
+    Catatan: Password PHP harus sama dengan password user database pada langkah 8, yaitu UkomDB@2026.
+
+    reload Apache:
+
+    sudo systemctl reload apache2
+
+
+    32. TES PHP DARI UBUNTU
+
+    curl http://localhost/database.php
+
+    Pastikan muncul tulisan Koneksi Database Berhasil beserta data UKOM TKJ, Absen 32, MikroTik, dan Server.
+
+
+    14. TES DARI LAPTOP
+
+    Buka browser laptop dan akses:
+
+    http://100.100.32.2/database.php
+
+
+    ============================================================
+    BAGIAN 3. KONFIGURASI PHPMYADMIN
+    ============================================================
+
+    15. INSTALL PHPMYADMIN
+
+    sudo apt update
+    sudo apt install phpmyadmin php-mysql -y
+
+    Saat installer meminta pilihan web server:
+    1. Pilih apache2 menggunakan tombol Space.
+    2. Tekan Enter.
+    3. Jika ditanya konfigurasi database dengan dbconfig-common, pilih Yes.
+
+
+    16. AKTIFKAN KONFIGURASI PHPMYADMIN
+
+    sudo a2enconf phpmyadmin
+    sudo systemctl reload apache2
+
+
+    17. PERIKSA FILE PHPMYADMIN
+
+    ls -lah /usr/share/phpmyadmin
+
+    Pastikan file dan direktori seperti index.php, libraries, dan templates tersedia.
+
+
+    18. TES PHPMYADMIN DARI UBUNTU
+
+    curl -I http://127.0.0.1/phpmyadmin/
+
+    Hasil yang diharapkan adalah HTTP/1.1 200 OK atau respons pengalihan menuju halaman login.
+
+
+    32. TES PHPMYADMIN DARI LAPTOP
+
+    Buka browser:
+
+    http://100.100.32.2/phpmyadmin/
+
+
+    ============================================================
+    BAGIAN 4. KONFIGURASI VIRTUALHOST APACHE
+    ============================================================
+
+    20. BUAT KONFIGURASI DOMAIN
+
+    Buka file:
+
+    sudo nano /etc/apache2/sites-available/ukom12tkja-32.sch.id.conf
+
+    Isi konfigurasi:
+
+<VirtualHost *:80>
+    ServerName ukom12tkja-32.sch.id
+    ServerAlias www.ukom12tkja-32.sch.id
+    ServerAlias 100.100.32.2
+
+    DocumentRoot /var/www/ukom12tkja-32.sch.id
+
+    <Directory /var/www/ukom12tkja-32.sch.id>
+        Options FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/ukom32-error.log
+    CustomLog ${APACHE_LOG_DIR}/ukom32-access.log combined
+</VirtualHost>
+
+    Buat direktori dan aktifkan situs:
+
+    sudo mkdir -p /var/www/ukom12tkja-32.sch.id
+    sudo a2ensite ukom12tkja-32.sch.id.conf
+    sudo apache2ctl configtest
+    sudo systemctl reload apache2
+
+    Pastikan hasil pemeriksaan konfigurasi menunjukkan Syntax OK.
+
+
+    21. BUAT LANDING PAGE
+
+    Buka file:
+
+    sudo nano /var/www/ukom12tkja-32.sch.id/index.html
+
+    Isi dengan HTML berikut:
+
+    <!DOCTYPE html>
+    <html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>UKOM TKJ 32</title>
+    </head>
+    <body>
+        <h1>UKOM TKJ 32</h1>
+        <p>Web Server dan Database Server</p>
+        <p>IP Server: 100.100.32.2</p>
+        <p>Domain: ukom12tkja-32.sch.id</p>
+
+        <a href="/database.php">Tes Database</a>
+        <br>
+        <a href="/phpmyadmin/">phpMyAdmin</a>
+    </body>
+    </html>
+
+
+    ============================================================
+    BAGIAN 5. KONFIGURASI DNS BIND9
+    ============================================================
+
+    22. INSTALL DAN AKTIFKAN BIND9
+
+    sudo apt install bind9 bind9-utils bind9-dnsutils -y
+    sudo systemctl enable --now named
+
+
+    23. KONFIGURASI ZONA DNS
+
+    Buka file:
+
+    sudo 
+
+    Tambahkan konfigurasi berikut:
+
+    zone "ukom12tkja-32.sch.id" {
+    type master;
+    file "/etc/bind/db.ukom12tkja-32.sch.id";
+};
+
+zone "32.100.100.in-addr.arpa" {
+    type master;
+    file "/etc/bind/db.100.100.32";
+};
+
+
+    24. BUAT FILE ZONA DNS
+
+    Salin file zona bawaan:
+
+    
+    sudo nano /etc/bind/db.ukom12tkja-32.sch.id
+
+    Isi file zona:
+
+$TTL 604800
+@   IN  SOA ns1.ukom12tkja-32.sch.id. admin.ukom12tkja-32.sch.id. (
+        2026110301
+        604800
+        86400
+        2432200
+        604800
+)
+
+@       IN  NS  ns1.ukom12tkja-32.sch.id.
+@       IN  A   100.100.32.2
+ns1     IN  A   100.100.32.2
+www     IN  A   100.100.32.2
+
+sudo named-checkzone ukom12tkja-32.sch.id /etc/bind/db.ukom12tkja-32.sch.id
+
+sudo nano /etc/bind/db.100.100.32
+$TTL 604800
+@   IN SOA ns1.ukom12tkja-32.sch.id. admin.ukom12tkja-32.sch.id. (
+        2026110701
+        604800
+        86400
+        2432200
+        604800
+)
+
+@   IN NS ns1.ukom12tkja-32.sch.id.
+
+2 IN PTR ukom12tkja-32.sch.id.
+
+
+
+    25. KONFIGURASI OPSI BIND9
+
+    Buka file:
+
+    sudo nano /etc/bind/named.conf.options
+
+    Sesuaikan konfigurasi menjadi:
+
+    options {
+    directory "/var/cache/bind";
+
+    listen-on {
+        127.0.0.1;
+        100.100.32.2;
+    };
+
+    listen-on-v6 { none; };
+
+    allow-query {
+        localhost;
+        10.10.32.0/28;
+        192.168.32.0/24;
+    };
+
+    recursion yes;
+
+    allow-recursion {
+        localhost;
+        10.10.32.0/28;
+        192.168.32.0/24;
+    };
+
+    allow-query-cache {
+        localhost;
+        10.10.32.0/28;
+        192.168.32.0/24;
+    };
+
+    forwarders {
+        8.8.8.8;
+        1.1.1.1;
+    };
+
+    dnssec-validation auto;
+};
+
+
+    26. VALIDASI DAN RELOAD BIND9
+
+    sudo named-checkconf
+    sudo named-checkzone ukom12tkja-32.sch.id /etc/bind/db.ukom12tkja-32.sch.id
+    sudo systemctl reload named
+    sudo systemctl status bind9 --no-pager
+
+    Tes DNS:
+
+    dig @127.0.0.1 ukom12tkja-32.sch.id
+    dig @100.100.32.2 ukom12tkja-32.sch.id
+
+    Pastikan hasil DNS mengarah ke 100.100.32.2.
+
+sudo nano /etc/bind/db.ukom12tkja-32.sch.id
+$TTL 604800
+
+@   IN  SOA ns1.ukom12tkja-32.sch.id. admin.ukom12tkja-32.sch.id. (
+        2026111402
+        604800
+        86400
+        2432200
+        604800
+)
+
+@       IN  NS  ns1.ukom12tkja-32.sch.id.
+
+@       IN  A   100.100.32.2
+ns1     IN  A   100.100.32.2
+www     IN  A   100.100.32.2
+
+sudo named-checkconf
+
+sudo named-checkzone ukom12tkja-32.sch.id /etc/bind/db.ukom12tkja-32.sch.id
+
+sudo systemctl reload named
+
+    ============================================================
+    BAGIAN 7. KONFIGURASI FIREWALL UFW
+    ============================================================
+
+    29. IZINKAN LAYANAN DARI JARINGAN LAB
+
+sudo ufw allow from 100.100.32.0/30 to 100.100.32.2 port 53 proto udp
+sudo ufw allow from 100.100.32.0/30 to 100.100.32.2 port 53 proto tcp
+
+sudo ufw allow from 10.10.32.0/28 to 100.100.32.2 port 53 proto udp
+sudo ufw allow from 10.10.32.0/28 to 100.100.32.2 port 53 proto tcp
+
+sudo ufw allow from 192.168.32.0/24 to 100.100.32.2 port 53 proto udp
+sudo ufw allow from 192.168.32.0/24 to 100.100.32.2 port 53 proto tcp
+
+sudo ufw allow from 100.100.32.0/30 to 100.100.32.2 port 80 proto tcp
+sudo ufw allow from 10.10.32.0/28 to 100.100.32.2 port 80 proto tcp
+sudo ufw allow from 192.168.32.0/24 to 100.100.32.2 port 80 proto tcp
+
+sudo ufw allow from 100.100.32.0/30 to 100.100.32.2 port 443 proto tcp
+sudo ufw allow from 10.10.32.0/28 to 100.100.32.2 port 443 proto tcp
+sudo ufw allow from 192.168.32.0/24 to 100.100.32.2 port 443 proto tcp
+
+sudo ufw allow from 100.100.32.0/30 to 100.100.32.2 port 22 proto tcp
+sudo ufw allow from 10.10.32.0/28 to 100.100.32.2 port 22 proto tcp
+
+sudo ufw status numbered
+sudo ufw enable
+sudo ufw reload
+sudo ufw status verbose
+
+    Periksa aturan yang tampil. Jika UFW belum aktif, pastikan akses SSH sudah diizinkan sebelum mengaktifkannya agar koneksi administrasi tidak terputus.
+
+
+    ============================================================
+    BAGIAN 8. PENGUJIAN AKHIR
+    ============================================================
+
+    30. PERIKSA IP DAN GATEWAY
+
+    ip -br a
+    ip route
+
+    Pastikan IP server sesuai dengan 100.100.32.2/30 dan gateway sesuai dengan konfigurasi jaringan lab.
+
+
+    31. PERIKSA STATUS LAYANAN
+
+    sudo systemctl status mariadb --no-pager
+    sudo systemctl status apache2 --no-pager
+    sudo systemctl status bind9 --no-pager
+
+    Pastikan ketiga layanan berjalan dengan status active (running).
+
+
+    32. PERIKSA KONFIGURASI DAN AKSES
+
+    Validasi konfigurasi Apache dan DNS:
+
+    sudo apache2ctl configtest
+    sudo named-checkconf
+    sudo named-checkzone ukom12tkja-32.sch.id /etc/bind/db.ukom12tkja-32.sch.id
+
+    Tes akses web:
+
+    curl -I http://100.100.32.2/
+    curl -I http://100.100.32.2/database.php
+    curl -I http://100.100.32.2/phpmyadmin/
+
+    Jika semua konfigurasi benar, layanan web dan phpMyAdmin dapat diakses dari jaringan lab sesuai aturan firewall.
+
+
+    ============================================================
+    HASIL AKHIR
+    ============================================================
+
+    IP Server         : 100.100.32.2/30
+    Gateway           : 100.100.32.1
+    Domain            : ukom12tkja-32.sch.id
+    Database          : ukom32
+    Tabel             : informasi
+    User Database     : ukom32
+    Password Database : UkomDB@2026
+    Landing Page      : http://ukom12tkja-32.sch.id/
+    Tes Database      : http://ukom12tkja-32.sch.id/database.php
+    phpMyAdmin        : http://ukom12tkja-32.sch.id/phpmyadmin/
+
+    CATATAN PENTING
+    Gateway 100.100.32.1 harus sesuai dengan jaringan VirtualBox atau router yang digunakan. Password database dipertahankan sesuai permintaan dan harus sama pada konfigurasi MariaDB serta PHP.
+
