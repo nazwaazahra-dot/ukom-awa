@@ -1,0 +1,56 @@
+192.168.26.1
+255.255.255.0
+IP AWAL CONTROL PANEL
+
+*IP di enp0s3*
+100.100.26.0/30
+100.100.26.2
+100.100.26.1
+
+kalo udh reboot klik *devices, optical, remove*
+trs ok abis itu *power off* ganti internet ap bridge dan ethernet yg trhubung yg dibawah
+
+login
+awa 123
+
+sudo su
+123
+
+systemctl status ssh (hrs active) 
+*cara aktifin* systemctl enable ssh
+systemctl start ssh
+systemctl status ssh *(active)*
+
+msuk cmd 
+ssh awa@100.100.26.2
+
+*kalo warning* ssh-keygen -R 100.100.26.2
+terus ssh awa@100.100.26.2 lagi
+
+ping google.com *EHH GAK BISA*
+nano /etc/netplan/00-installer-config.yaml *(KLIK TAB)*
+
+address ke2 apus, masukin 8.8.8.8. dibawahnya antara 2d
+sama 1.1.1.1
+ctrl X, Y enter
+netplan apply, enter dan *pastikan tdk muncul apapun.*
+
+ping google.com, *maka akan berhasil*
+
+ssh awa@100.100.26.2
+sudo su
+git clone (link github) 
+windows v 
+
+ls
+cd ukom (tab) 
+ls
+nano konfig (tab) 
+tambah cmd 
+ssh awa@100.100.26.2
+balik ke yg awal
+
+sudo su
+pw 123
+sudo apt update -y
+sudo apt install mariadb
