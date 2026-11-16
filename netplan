@@ -1,0 +1,121 @@
+# Konfigurasi Netplan IP Address Ubuntu Server
+
+## 1. Konfigurasi Awal IP Address Ubuntu Server
+
+### 1.1 Memeriksa Nama Interface
+
+Nyalakan Ubuntu Server, kemudian buka terminal dan jalankan perintah:
+
+```bash
+ip -br a
+```
+
+Digunakan untuk melihat nama interface jaringan dan statusnya. Nama interface yang muncul akan digunakan pada konfigurasi berikutnya.
+
+### 1.2 Memeriksa File Netplan
+
+```bash
+ls /etc/netplan/
+```
+
+Digunakan untuk melihat file konfigurasi jaringan yang tersedia pada Ubuntu Server.
+
+Jika muncul file `50-cloud-init.yaml`, buka menggunakan perintah:
+
+```bash
+sudo nano /etc/netplan/50-cloud-init.yaml
+```
+
+Perintah ini digunakan untuk membuka file Netplan agar konfigurasi IP Address dapat diatur. Sesuaikan nama file dengan hasil pemeriksaan sebelumnya.
+
+### 1.3 Mengatur IP Address Ubuntu Server
+
+Sesuaikan konfigurasi jaringan dengan pengaturan berikut. Jika nama interface berbeda, ganti `enp0s3` sesuai nama interface milikmu.
+
+```yaml
+network:
+  ethernets:
+    enp0s3:
+      addresses:
+        - 100.100.25.2/30
+      nameservers:
+        addresses:
+          - 8.8.8.8
+          - 1.1.1.1
+        search: []
+      routes:
+        - to: default
+          via: 100.100.25.1
+  version: 2
+
+network:
+  version: 2
+  ethernets:
+    enp0s3:
+      dhcp4: no
+      addresses:
+        - 100.100.25.2/30
+      routes:
+        - to: default
+          via: 100.100.25.1
+      nameservers:
+        addresses:
+          - 100.100.25.2
+          - 8.8.8.8
+          - 1.1.1.1
+```
+
+Konfigurasi ini digunakan untuk memberikan IP Address statis pada Ubuntu Server, menentukan DNS, dan mengatur gateway menuju MikroTik.
+
+- `100.100.25.2/30`: IP Address Ubuntu Server.
+- `8.8.8.8` dan `1.1.1.1`: DNS Server.
+- `100.100.25.1`: Gateway menuju MikroTik.
+- `version: 2`: Versi konfigurasi Netplan.
+
+Simpan konfigurasi dengan menekan `Ctrl + O`, lalu `Enter`. Setelah itu, tekan `Ctrl + X` untuk keluar.
+
+### 1.4 Menerapkan Konfigurasi Netplan
+
+```bash
+sudo netplan try
+```
+
+Digunakan untuk menguji konfigurasi jaringan sebelum diterapkan. Jika berhasil, konfirmasi sesuai petunjuk yang muncul.
+
+Kemudian jalankan:
+
+```bash
+sudo netplan apply
+```
+
+Digunakan untuk menerapkan konfigurasi jaringan yang sudah dibuat.
+
+### 1.5 Menguji Koneksi Ubuntu Server
+
+```bash
+ip a
+```
+
+Digunakan untuk memeriksa IP Address yang sudah terpasang pada interface Ubuntu Server. Pastikan IP yang muncul adalah:
+
+```text
+100.100.25.2/30
+```
+
+Kemudian lakukan pengujian koneksi ke gateway MikroTik:
+
+```bash
+ping 100.100.25.1
+```
+
+Digunakan untuk menguji koneksi Ubuntu Server ke gateway MikroTik.
+
+Selanjutnya lakukan pengujian koneksi internet sekaligus DNS:
+
+```bash
+ping google.com
+```
+
+Digunakan untuk menguji koneksi internet sekaligus memastikan DNS dapat menerjemahkan nama domain.
+
+Jika pengujian berhasil, Ubuntu Server sudah dapat berkomunikasi dengan gateway dan melakukan penerjemahan nama domain.
